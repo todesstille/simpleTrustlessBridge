@@ -31,8 +31,11 @@ contract Bridge is BToken, EIP712Bridge {
     mapping(bytes32 => Deposit) public deposits;
     mapping(address => mapping (uint256 => mapping (uint256 => uint256))) usedNonces;
 
-    event Deposited (bytes32 depositId);
-    event Withdrawed (bytes32 depositId);
+
+    event Deposited (address from, uint256 fromChain, address to, uint256 toChain, uint256 amount, uint256 nonce, bytes32 depositId);
+    event Sent(address from, uint256 fromChain, address to, uint256 toChain, uint256 amount, uint256 nonce, bytes32 depositId, bytes signature);
+    event Revoked (bytes32 depositId);
+    event Withdrawed(address from, uint256 chainFrom, address to, uint256 chainTo, uint256 amount, uint256 nonce);
 
     constructor(address validator_, uint256 chainId_) EIP712Bridge("Trustless Bridge", "0.1") {
         validator = validator_;
@@ -46,12 +49,13 @@ contract Bridge is BToken, EIP712Bridge {
         Deposit memory deposit_ = Deposit (from, chainId, to, toChain, amount, nonce, block.timestamp, DepositStatus.PENDING);
         deposits[depositId] = deposit_;
         nonces[from][chainId][toChain] += 1;
-        emit Deposited(depositId);
+        emit Deposited(from, chainId, to, toChain, amount, nonce, depositId);
         return depositId;
     }
 
     function deposit(address to, uint256 toChain, uint256 amount) external returns (bytes32) {
-        // Debug function. It implies that user already transfer BTokens on contract
+        require(balanceOf(msg.sender) >= amount, "You don't have enough tokens on balance");
+        _transfer(msg.sender, address(this), amount);
         return _deposit(msg.sender, to, toChain, amount);
     }
 
@@ -62,7 +66,7 @@ contract Bridge is BToken, EIP712Bridge {
         require(deposit_.time + lockTime <= block.timestamp, "Deposit is still locked");
         _transfer(address(this), msg.sender, deposit_.amount);
         deposit_.status = DepositStatus.REVOKED;
-        emit Withdrawed(depositId);
+        emit Revoked(depositId);
     }
 
     function getDigest(address from, uint256 fromChain, address to, uint256 toChain, uint256 amount, uint256 nonce) 
@@ -94,6 +98,7 @@ contract Bridge is BToken, EIP712Bridge {
         address signer = ECDSA.recover(digest, signature);
         require (signer == validator, "You are not the Validator");
         deposit_.status = DepositStatus.SENT;
+        emit Sent(deposit_.from, chainId, deposit_.to, deposit_.toChain, deposit_.amount, deposit_.nonce, depositId, signature);
     }
 
     function withdraw(address from, uint256 chainFrom, address to, uint256 amount, uint256 nonce, bytes memory signature) external {
@@ -108,15 +113,18 @@ contract Bridge is BToken, EIP712Bridge {
             to,
             chainId,
             amount,
-            nonces[from][chainFrom][chainId]
+            nonce
         );
         address signer = ECDSA.recover(digest, signature);
         require (signer == validator, "Invalid signature");
         require(chainFrom != chainId, "Something nasty happened");
         _transfer(address(this), to, amount);
         nonces[from][chainFrom][chainId] += 1;
+        emit Withdrawed(from, chainFrom, to, chainId, amount, nonce);
     }
-    function getChainId() public view returns (uint256) {
-        return block.chainid;
+
+    function collect() external {
+        require(msg.sender == validator, "You have no admin rights");
+        payable(validator).transfer(address(this).balance);
     }
 }
