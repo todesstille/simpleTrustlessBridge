@@ -90,4 +90,20 @@ contract Bridge is BToken, EIP712Bridge {
         require (signer == validator, "You are not the Validator");
         deposit_.status = DepositStatus.SENT;
     }
+
+    function withdraw(address from, uint256 chainFrom, address to, uint256 amount, bytes memory signature) external {
+        bytes32 digest = getDigest(
+            from,
+            chainFrom,
+            to,
+            chainId,
+            amount,
+            nonces[from][chainFrom][chainId]
+        );
+        address signer = ECDSA.recover(digest, signature);
+        require (signer == validator, "Invalid signature");
+        require(chainFrom != chainId, "Something nasty happened");
+        transfer(to, amount);
+        nonces[from][chainFrom][chainId] += 1;
+    }
 }
