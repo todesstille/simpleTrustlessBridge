@@ -1,13 +1,15 @@
-# Sample Hardhat Project
+# simple Trustless Bridge
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+At this moment only transfer of operational token (bTKN)
 
-Try running some of the following tasks:
+Contract should be deployed in 2 networks supporting secp256k1
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```
+Alice deposits bTKN on the bridge in network1, with the parameters to transfer bTKN to network2 bob.address
+
+bTKN are locked for a 1 hour
+
+During this hour Admin should call a send() function with his signature included, claiming alice bTKN
+
+This action will reveal a signature, which could be used to transfer bTKN from bridge in network2 to bob.address.
+
+If Admin doesn't call send() function, Alice could revoke her deposit from contract in network1
