@@ -46,8 +46,8 @@ describe("Bridge", function () {
   });
   
   beforeEach(async () => {
-    bridge1 = await Bridge.deploy(admin.address, 1);
-    bridge2 = await Bridge.deploy(admin.address, 2);
+    bridge1 = await Bridge.deploy(1);
+    bridge2 = await Bridge.deploy(2);
     await bridge1.transfer(alice.address, lowAmount.mul(10))
   });
   

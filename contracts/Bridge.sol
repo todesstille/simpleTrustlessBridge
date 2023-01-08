@@ -37,8 +37,8 @@ contract Bridge is BToken, EIP712Bridge {
     event Revoked (bytes32 depositId);
     event Withdrawed(address from, uint256 chainFrom, address to, uint256 chainTo, uint256 amount, uint256 nonce);
 
-    constructor(address validator_, uint256 chainId_) EIP712Bridge("Trustless Bridge", "0.1") {
-        validator = validator_;
+    constructor(uint256 chainId_) EIP712Bridge("Trustless Bridge", "0.1") {
+        validator = msg.sender;
         chainId = chainId_;
     }
 

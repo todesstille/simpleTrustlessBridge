@@ -618,7 +618,7 @@
   resolved "https://registry.yarnpkg.com/@nomiclabs/hardhat-ethers/-/hardhat-ethers-2.2.1.tgz#8057b43566a0e41abeb8142064a3c0d3f23dca86"
   integrity sha512-RHWYwnxryWR8hzRmU4Jm/q4gzvXpetUOJ4OPlwH2YARcDB+j79+yAYCwO0lN1SUOb4++oOTJEe6AWLEc42LIvg==
 
-"@nomiclabs/hardhat-etherscan@^3.0.0":
+"@nomiclabs/hardhat-etherscan@^3.1.4":
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/@nomiclabs/hardhat-etherscan/-/hardhat-etherscan-3.1.4.tgz#970e57fabc6060489c93b3f646ca790db36ffee0"
   integrity sha512-fw8JCfukf6MdIGoySRmSftlM2wBgoaSbWQZgiYfD/KTeaSFEWCdMpuPZcLSBXtwtnQyyWDs07Lo7fL8HSqtD2Q==
@@ -1682,6 +1682,11 @@ dir-glob@^3.0.1:
   integrity sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==
   dependencies:
     path-type "^4.0.0"
+
+dotenv@^16.0.3:
+  version "16.0.3"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.0.3.tgz#115aec42bac5053db3c456db30cc243a5a836a07"
+  integrity sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
